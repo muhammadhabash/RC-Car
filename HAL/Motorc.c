@@ -1,13 +1,13 @@
 #include "Motor.h"
-
+#include "../STD_TYPES.h"
 
 uint8_t Motor_Init(uint8_t u8_MotorId)
 {
 	switch(u8_MotorId)
 	{
 		case MOTOR_ID_01:
-			void_pwmPinsInit();
-			u8_pwmMotorsControl(u8_PWM_0_DUTY_PERCENT,u8_PWM_TO_M1_AND_M2);
+			SWPWM_voidPinsInit();
+			SWPWM_u8ControlChannels(u8_PWM_0_DUTY_PERCENT,u8_SWPWM_TO_CH1_AND_CH2);
 			DIO_SetPinDirection(MOTOR_01_DIR_PORT,MOTOR_01_DIR_PIN01, OUTPUT);
 			DIO_SetPinDirection(MOTOR_01_DIR_PORT,MOTOR_01_DIR_PIN02, OUTPUT);
 			DIO_SetPinValue(MOTOR_01_DIR_PORT, MOTOR_01_DIR_PIN01, LOW);
@@ -15,8 +15,8 @@ uint8_t Motor_Init(uint8_t u8_MotorId)
 			return MOTOR_ERROR_OK;
 			break;
 		case MOTOR_ID_02:
-			void_pwmPinsInit();
-			u8_pwmMotorsControl(u8_PWM_0_DUTY_PERCENT,u8_PWM_TO_M1_AND_M2);
+			SWPWM_voidPinsInit();
+			SWPWM_u8ControlChannels(u8_PWM_0_DUTY_PERCENT,u8_SWPWM_TO_CH1_AND_CH2);
 			DIO_SetPinDirection(MOTOR_02_DIR_PORT,MOTOR_02_DIR_PIN01,OUTPUT);
 			DIO_SetPinDirection(MOTOR_02_DIR_PORT,MOTOR_02_DIR_PIN02,OUTPUT);
 			DIO_SetPinValue(MOTOR_02_DIR_PORT, MOTOR_02_DIR_PIN01,LOW);
@@ -70,12 +70,12 @@ uint8_t Motor_Move(uint8_t MotorId, uint8_t u8_MotorDirection,uint8_t u8_MotorPo
 	{
 		case MOTOR_ID_01:
 			Motor_setDirection(MotorId,u8_MotorDirection);
-			u8_pwmMotorsControl(u8_MotorPower,u8_PWM_TO_M1_STOP_M2);
+			SWPWM_u8ControlChannels(u8_MotorPower,u8_SWPWM_TO_CH1_STOP_CH2);
 			return MOTOR_ERROR_OK;
 			break;
 		case MOTOR_ID_02:
 			Motor_setDirection(MotorId,u8_MotorDirection);
-			u8_pwmMotorsControl(u8_MotorPower,u8_PWM_TO_M2_STOP_M1);
+			SWPWM_u8ControlChannels(u8_MotorPower,u8_SWPWM_TO_CH2_STOP_CH1);
 			return MOTOR_ERROR_OK;
 			break;
 		default:
@@ -87,7 +87,7 @@ uint8_t MoveAllMotors(uint8_t u8_Motor01Direction,uint8_t u8_Motor02Direction,ui
 {
 	Motor_setDirection(MOTOR_ID_01,u8_Motor01Direction);
 	Motor_setDirection(MOTOR_ID_02,u8_Motor02Direction);
-	u8_pwmMotorsControl(u8_MotorsPower,u8_PWM_TO_M1_AND_M2);
+	SWPWM_u8ControlChannels(u8_MotorsPower,u8_SWPWM_TO_CH1_AND_CH2);
 	return MOTOR_ERROR_OK;
 
 }

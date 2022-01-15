@@ -1,5 +1,15 @@
-#include "STD_TYPES.h"
-#include "BIT_MATH.h"
+/*
+ *  Author: Mina Mamdouh Youssef
+ *  Driver: Timer0
+ *  Layer arch : MCAL
+ *  Created on: Jan 10, 2022
+ *  Modified on : Jan 15, 2022
+ *	version:2
+ *
+ */
+
+#include "../STD_TYPES.h"
+#include "../BIT_MATH.h"
 #include "timers_private.h"
 #include "timers_interface.h"
 
@@ -8,28 +18,20 @@ static void (*Timer0CompareMatchSetCallBackISR)(void) = NULL_POINTER;
 static void (*Timer0OverFlowSetCallBackISR)(void) = NULL_POINTER; 
 
 
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-void void_timersInit(void)
+void TIMERS_voidInit(void)
 {
 	#if	u8_TIMER0_MODE_CONFIG==u8_NORMAL_MODE
 		CLR_BIT(u8_TCCR0,u8_WGM00_BIT) ;
 		CLR_BIT(u8_TCCR0,u8_WGM01_BIT) ;
 		CLR_BIT(u8_TCCR0,u8_FOC0_BIT) ;
-	#elif u8_TIMER0_MODE_CONFIG==u8_PWM_PHASE_CORRECT_MODE
-		SET_BIT(u8_TCCR0,u8_WGM00_BIT) ; 
-		CLR_BIT(u8_TCCR0,u8_WGM01_BIT) ;
 	#elif u8_TIMER0_MODE_CONFIG==u8_CTC_MODE
 		CLR_BIT(u8_TCCR0,u8_WGM00_BIT) ;
 		SET_BIT(u8_TCCR0,u8_WGM01_BIT) ; 
 		CLR_BIT(u8_TCCR0,u8_FOC0_BIT) ;
-	#elif u8_TIMER0_MODE_CONFIG==u8_FAST_PWM_MODE
-		SET_BIT(u8_TCCR0,u8_WGM00_BIT) ; 
-		SET_BIT(u8_TCCR0,u8_WGM01_BIT) ; 
 	#else
 		#error "error in prebuild timer0 config"
 	#endif
@@ -53,19 +55,6 @@ void void_timersInit(void)
 			#error "oc0 config error "
 		#endif
 		
-	#elif u8_TIMER0_MODE_CONFIG==u8_FAST_PWM_MODE||u8_TIMER0_MODE_CONFIG==u8_PWM_PHASE_CORRECT_MODE
-		#if u8_TIMER0_COMP_MATCH_PWM_CONFIG==u8_OC0_DISCONNECTED
-			CLR_BIT(u8_TCCR0,u8_COM00_BIT) ;
-			CLR_BIT(u8_TCCR0,u8_COM01_BIT) ;
-		#elif u8_TIMER0_COMP_MATCH_PWM_CONFIG==u8_OC0_CLEAR_ON_COMPARE_MATCH
-			CLR_BIT(u8_TCCR0,u8_COM00_BIT) ;
-			SET_BIT(u8_TCCR0,u8_COM01_BIT) ; 
-		#elif u8_TIMER0_COMP_MATCH_PWM_CONFIG==u8_OC0_SET_ON_COMPARE_MATCH
-			SET_BIT(u8_TCCR0,u8_COM00_BIT) ; 
-			SET_BIT(u8_TCCR0,u8_COM01_BIT) ; 
-		#else 
-			#error "oc0 config error "
-		#endif
 	#else 
 		#error "error in prebuild timer0 config"
 	#endif
@@ -112,7 +101,7 @@ void void_timersInit(void)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-uint8_t u8_StartTimer0WithclockAndPrescalerSelect(uint8_t u8_preScallerVal)
+uint8_t TIMER0_u8StartWithclockAndPrescalerSelect(uint8_t u8_preScallerVal) 
 {
 	uint8_t u8_ErrorFlag = u8_OK ; 
 	switch(u8_preScallerVal)
@@ -162,7 +151,7 @@ uint8_t u8_StartTimer0WithclockAndPrescalerSelect(uint8_t u8_preScallerVal)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void void_stopTimer0(void)
+void TIMER0_voidstop(void)
 {
 	CLR_BIT(u8_TCCR0,u8_CS02_BIT) ; 
 	CLR_BIT(u8_TCCR0,u8_CS01_BIT) ; 
@@ -172,14 +161,14 @@ void void_stopTimer0(void)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-uint8_t u8_timerClearIntFlag(uint8_t u8_wantedIntClearFlag)
+uint8_t TIMERS_u8ClearIntFlag(uint8_t u8_wantedIntClearFlag)
 {
 		uint8_t u8_ErrorFlag = u8_OK ; 
 	switch(u8_wantedIntClearFlag)
 	{
-		case u8_TIMER0_OVER_FLOW			: CLR_BIT(u8_TIFR,u8_TOV0_BIT) ; 
+		case u8_TIMER0_OVER_FLOW			: SET_BIT(u8_TIFR,u8_TOV0_BIT) ;
 											  break ;
-		case u8_TIMER0_COMPARE_ON_MATCH		: CLR_BIT(u8_TIFR,u8_OCF0_BIT) ;
+		case u8_TIMER0_COMPARE_ON_MATCH		: SET_BIT(u8_TIFR,u8_OCF0_BIT) ;
 											  break ;
 		default								: u8_ErrorFlag = u8_NOK ;
 											  break ; 
@@ -190,15 +179,34 @@ uint8_t u8_timerClearIntFlag(uint8_t u8_wantedIntClearFlag)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-uint8_t u8_timerIntModesEn(uint8_t u8_wantedIntModeEn)
+uint8_t TIMERS_u8GetIntFlag(uint8_t u8_wantedIntClearFlag,uint8_t* pu8_retturnIntFlag)
+{
+		uint8_t u8_ErrorFlag = u8_OK ; 
+	switch(u8_wantedIntClearFlag)
+	{
+		case u8_TIMER0_OVER_FLOW			: (*pu8_retturnIntFlag) = GET_BIT(u8_TIFR,u8_TOV0_BIT) ; 
+											  break ;
+		case u8_TIMER0_COMPARE_ON_MATCH		: (*pu8_retturnIntFlag) = GET_BIT(u8_TIFR,u8_OCF0_BIT) ;
+											  break ;
+		default								: u8_ErrorFlag = u8_NOK ;
+											  break ; 
+	}
+	return u8_ErrorFlag ; 
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+uint8_t TIMERS_u8IntModesEn(uint8_t u8_wantedIntModeEn)
 {
 	uint8_t u8_ErrorFlag = u8_OK ; 
 	switch(u8_wantedIntModeEn)
 	{
-		case u8_TIMER0_OVER_FLOW			:  CLR_BIT(u8_TIFR,u8_TOV0_BIT) ;
+		case u8_TIMER0_OVER_FLOW			:  SET_BIT(u8_TIFR,u8_TOV0_BIT) ;
 											   SET_BIT(u8_TIMSK,u8_TOIE0_BIT);
 											   break ; 
-		case u8_TIMER0_COMPARE_ON_MATCH		:  CLR_BIT(u8_TIFR,u8_OCF0_BIT) ;
+		case u8_TIMER0_COMPARE_ON_MATCH		:  SET_BIT(u8_TIFR,u8_OCF0_BIT) ;
 											   SET_BIT(u8_TIMSK,u8_OCIE0_BIT);
 											   break ;
 		default 							:  u8_ErrorFlag = u8_NOK ; 
@@ -210,7 +218,7 @@ uint8_t u8_timerIntModesEn(uint8_t u8_wantedIntModeEn)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-uint8_t u8_timerIntModesDis(uint8_t u8_wantedIntModeDis)
+uint8_t TIMERS_u8IntModesDis(uint8_t u8_wantedIntModeDis)
 {
 	uint8_t u8_ErrorFlag = u8_OK ; 
 	switch(u8_wantedIntModeDis)
@@ -229,7 +237,7 @@ uint8_t u8_timerIntModesDis(uint8_t u8_wantedIntModeDis)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-uint8_t u8_setTimer0OverFlowRegTicksBeforeOV(uint8_t u8_wantedTicksBeforeOV)
+uint8_t Timer0_u8setOverFlowRegTicksBeforeOV(uint8_t u8_wantedTicksBeforeOV)
 {
 	uint8_t u8_ErrorFlag = u8_OK ; 
 	uint8_t u8_SetTimer0CounterReg ; 
@@ -248,7 +256,7 @@ uint8_t u8_setTimer0OverFlowRegTicksBeforeOV(uint8_t u8_wantedTicksBeforeOV)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-uint8_t u8_setTimer0CompareRegTicksBeforeOV(uint8_t u8_wantedTicksToCompare)
+uint8_t Timer0_u8setCompareRegTicksBeforeOV(uint8_t u8_wantedTicksToCompare)
 {
 	uint8_t u8_ErrorFlag = u8_OK ; 
 	if(u8_wantedTicksToCompare<=u8_MAX_8BIT_REG_HOLD)
@@ -265,7 +273,7 @@ uint8_t u8_setTimer0CompareRegTicksBeforeOV(uint8_t u8_wantedTicksToCompare)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-uint8_t u8_setCallBack(uint8_t u8_wantedISRModeToSet,void(*ISRFuncToSet)(void)) 
+uint8_t TIMER0_u8setCallBack(uint8_t u8_wantedISRModeToSet,void(*ISRFuncToSet)(void)) 
 {
 	uint8_t u8_ErrorFlag = u8_OK ; 
 	if(ISRFuncToSet!=NULL_POINTER)
@@ -318,3 +326,4 @@ void __vector_11 (void)
 		//do nothing
 	}
 }
+

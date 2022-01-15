@@ -1,7 +1,7 @@
-#include "keypad.h"
-#include "Motor.h"
-#include "GIE_interface.h"
-#include "delay.h"
+#include "../HAL/keypad.h"
+#include "../HAL/Motor.h"
+#include "../MCAL/GIE_interface.h"
+#include "../HAL/delay.h"
 
 #define CHANGE_STATE (1)
 #define MOVE         (2)

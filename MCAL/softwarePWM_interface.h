@@ -3,7 +3,8 @@
  *  Driver: software PWM
  *  Layer arch : MCAL
  *  Created on: Jan 10, 2022
- *  version:1
+ *  Modified on : Jan 15, 2022
+ *	version:2
  *
  */
 
@@ -13,9 +14,9 @@
 
 
 
-#define u8_PWM_TO_M1_STOP_M2			120
-#define u8_PWM_TO_M2_STOP_M1			121
-#define u8_PWM_TO_M1_AND_M2				122
+#define u8_SWPWM_TO_CH1_STOP_CH2			120
+#define u8_SWPWM_TO_CH2_STOP_CH1			121
+#define u8_SWPWM_TO_CH1_AND_CH2				122
 
 
 #define u8_PWM_0_DUTY_PERCENT				0
@@ -30,8 +31,8 @@
 #define u8_PWM_90_DUTY_PERCENT				90
 #define u8_PWM_100_DUTY_PERCENT				100
 
-void void_pwmPinsInit(void)                                                        ;
-uint8_t u8_pwmMotorsControl(uint8_t u8_wantedPWMDuty,uint8_t u8_wantedMotorForPwm) ;
+void SWPWM_voidPinsInit(void)                                                        ;
+uint8_t SWPWM_u8ControlChannels(uint8_t u8_wantedPWMDuty,uint8_t u8_wantedMotorForPwm) ;
 
 
 #endif

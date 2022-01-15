@@ -2,10 +2,12 @@
  *  Author: Mina Mamdouh Youssef
  *  Driver: Timer0
  *  Layer arch : MCAL
- *  Created on: Jan 9, 2022
- *  version:1
+ *  Created on: Jan 10, 2022
+ *  Modified on : Jan 15, 2022
+ *	version:2
  *
  */
+
 
 
 #ifndef __TIMERS__PRIVATE__
@@ -22,21 +24,10 @@
 
 //TIMER CONFIG MODES
 #define u8_NORMAL_MODE						1
-#define u8_PWM_PHASE_CORRECT_MODE  		    2
 #define u8_CTC_MODE							3
-#define u8_FAST_PWM_MODE					4
 
 
-#define u8_NO_CLK_TIMER_STOP                5
-#define u8_INTERNAL_CLK_NO_PRE              6
-#define u8_INTERNAL_CLK_PRE_8				7
-#define u8_INTERNAL_CLK_PRE_64				8
-#define u8_INTERNAL_CLK_PRE_256				9
-#define u8_INTERNAL_CLK_PRE_1024			10	
-#define u8_EXTERNAL_CLK_FALLING				11
-#define u8_EXTERNAL_CLK_RISING				12
 
-   
 //TCCR0 BIT NAMES 
 #define u8_FOC0_BIT							7
 #define u8_WGM00_BIT						6
@@ -54,7 +45,6 @@
 //TIMSK BIT NAMES
 #define u8_OCIE0_BIT						1
 #define u8_TOIE0_BIT						0
-
 
 
 #endif

@@ -1,11 +1,11 @@
 #ifndef MOTOR_H_
 #define MOTOR_H_
 
-#include "STD_TYPES.h"
-#include "BIT_MATH.h"
-#include "DIO_interface.h"
-#include "DIO_private.h"
-#include "softwarePWM_interface.h"
+#include "../STD_TYPES.h"
+#include "../BIT_MATH.h"
+#include "../MCAL/DIO_interface.h"
+#include "../MCAL/DIO_private.h"
+#include "../MCAL/softwarePWM_interface.h"
 
 #define	MOTOR_ERROR_OK				1U
 #define	MOTOR_ERROR_NOK				0U

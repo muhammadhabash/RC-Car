@@ -1,7 +1,7 @@
 #ifndef _DIO_INTERFACE_H_
 #define _DIO_INTERFACE_H_
 
-#include "STD_TYPES.h"
+#include "../STD_TYPES.h"
                     /* DIO APIs deales with pins */
          uint8_t DIO_SetPinDirection(uint8_t PORT , uint8_t PIN , uint8_t DIRECTION);
          uint8_t DIO_SetPinValue(uint8_t PORT , uint8_t PIN , uint8_t VALUE);
